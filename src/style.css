@@ -1,0 +1,175 @@
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+    display: flex;
+    flex-flow: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+modifiers input {
+    margin: 0;
+    padding: 0;
+    height: 1.5rem;
+    aspect-ratio: 1/1;
+}
+
+date {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+date p {
+    margin-right: .7rem;
+}
+
+column-label {
+    width: 60vw;
+    display: flex;
+    flex-flow: row nowrap;
+    margin: .1rem;
+}
+
+column-label label:nth-child(1) {
+    width: 20vw;
+}
+
+row {
+    width: 100ch;
+    display: flex;
+    flex-flow: row nowrap;
+    
+    padding: .1rem;
+
+    background-color: #f0f0f0;
+}
+
+row input[type="number"] {
+    margin-right: .5vw;
+    width: 18ch;
+}
+
+row input[type="file"] {
+    width: 100%;
+}
+
+row p {
+    margin: 0;
+    padding: 0;
+    font-size: .9rem;
+    opacity: 0.6;
+    align-self: center;
+
+    width: 8ch;
+}
+
+modifiers {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+
+    padding: .1rem;
+    margin-left: 5vw;
+    background-color: white;
+}
+
+modifiers label {
+    font-size: small;
+    margin-left: 1ch;
+}
+
+modifiers img {
+    height: .9rem;
+    aspect-ratio: 1/1;
+    margin-left: .1vw;
+    margin-right: .2vw;
+    margin-top: .1vw;
+}
+
+scroller {
+    padding: 0;
+    margin: 0;
+    width: 60vw;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    height: 62vh;
+}
+
+@media (max-aspect-ratio: 10/9) {
+    scroller {
+        width: 90vw;
+    }
+}
+
+export {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    background-color: white;
+}
+
+export status {
+    margin: 0.1rem;
+    padding: 0;
+    font-size: .8rem;
+    opacity: .8;
+    text-align: center;
+}
+
+export button {
+    margin: 1rem;
+    padding: .2rem;
+    margin-top: 0;
+    width: 8ch;
+    font-size: 1.1rem;
+}
+
+footer {
+    z-index: -1;
+
+    text-align: center;
+    position: absolute;
+    bottom: 1.23rem;
+    width: 100vw;
+    font-size: .9rem;
+    opacity: .9;
+}
+
+scroller {
+    background:
+        /* Shadow Cover TOP */
+        linear-gradient(white 30%,
+            rgba(255, 255, 255, 0)) center top,
+
+        /* Shadow Cover BOTTOM */
+        linear-gradient(rgba(255, 255, 255, 0),
+            white 70%) center bottom,
+
+        /* Shadow TOP */
+        radial-gradient(farthest-side at 50% 0,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0)) center top,
+
+        /* Shadow BOTTOM */
+        radial-gradient(farthest-side at 50% 100%,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0)) center bottom;
+
+    background-repeat: no-repeat;
+    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+    background-attachment: local, local, scroll, scroll;
+}
