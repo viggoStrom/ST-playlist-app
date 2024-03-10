@@ -90,6 +90,7 @@ typings/
 
 # Electron-Forge
 out/
+dist/
 src/templateAssets/1 min Covid Disclaimer.mp4
 src/templateAssets/1 min Emergency Procedures.mp4
 src/templateAssets/1 min loop with Countdown.mp4
