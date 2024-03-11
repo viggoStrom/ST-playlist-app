@@ -60,15 +60,24 @@ const updateTimePreviews = () => {
 const updateModifiers = (object) => {
     const pause = object.parentElement.children[2]
     const alert = object.parentElement.children[5]
+    const extend = object.parentElement.children[8]
 
     if (object.id === "alertCheckbox") {
         if (pause.checked === false && alert.checked === true) {
             pause.checked = true
         }
     }
-    else if (object.id = "pauseCheckbox") {
+    else if (object.id === "extendCheckbox") {
+        if (extend.checked === true && pause.checked === false) {
+            pause.checked = true
+        }
+    }
+    else if (object.id === "pauseCheckbox") {
         if (pause.checked === false && alert.checked === true) {
             alert.checked = false
+        }
+        if (pause.checked === false && extend.checked === true) {
+            extend.checked = false
         }
     }
 }

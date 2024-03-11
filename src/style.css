@@ -19,13 +19,6 @@ h2 {
     text-align: center;
 }
 
-modifiers input {
-    margin: 0;
-    padding: 0;
-    height: 1.5rem;
-    aspect-ratio: 1/1;
-}
-
 date {
     display: flex;
     flex-flow: row nowrap;
@@ -45,14 +38,14 @@ column-label {
 }
 
 column-label label:nth-child(1) {
-    width: 20vw;
+    width: 20.5ch;
 }
 
 row {
     width: 100ch;
     display: flex;
     flex-flow: row nowrap;
-    
+
     padding: .1rem;
 
     background-color: #f0f0f0;
@@ -84,12 +77,23 @@ modifiers {
 
     padding: .1rem;
     margin-left: 5vw;
-    background-color: white;
+
+    height: 1.5rem;
+}
+
+@keyframes expand {
+    from {
+        height: 1.5rem;
+    }
+
+    to {
+        height: 2rem;
+    }
 }
 
 modifiers label {
     font-size: small;
-    margin-left: 1ch;
+    margin-left: 2ch;
 }
 
 modifiers img {
@@ -100,6 +104,14 @@ modifiers img {
     margin-top: .1vw;
 }
 
+
+modifiers input {
+    margin: 0;
+    padding: 0;
+    width: 3ch;
+    aspect-ratio: 1/1;
+}
+
 scroller {
     padding: 0;
     margin: 0;
@@ -107,6 +119,10 @@ scroller {
     overflow-y: scroll;
     overflow-x: scroll;
     height: 62vh;
+}
+
+scroller::-webkit-scrollbar {
+    display: none;
 }
 
 @media (max-aspect-ratio: 10/9) {
@@ -152,24 +168,18 @@ footer {
 scroller {
     background:
         /* Shadow Cover TOP */
-        linear-gradient(white 30%,
-            rgba(255, 255, 255, 0)) center top,
+        linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
 
         /* Shadow Cover BOTTOM */
-        linear-gradient(rgba(255, 255, 255, 0),
-            white 70%) center bottom,
+        linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
 
         /* Shadow TOP */
-        radial-gradient(farthest-side at 50% 0,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)) center top,
+        radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
 
         /* Shadow BOTTOM */
-        radial-gradient(farthest-side at 50% 100%,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)) center bottom;
+        radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
 
     background-repeat: no-repeat;
-    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+    background-size: 100% 2rem, 100% 2rem, 100% 1rem, 100% 1rem;
     background-attachment: local, local, scroll, scroll;
 }

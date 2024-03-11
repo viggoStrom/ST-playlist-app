@@ -167,8 +167,8 @@ const main = async (event, dataRaw) => {
 
     // Copy pauses
     // TODO Switch these for distribution cuz electron :/
-    // const pausePath = "src/templateAssets/"
-    const pausePath = "resources/app/src/templateAssets/"
+    const pausePath = "src/templateAssets/"
+    // const pausePath = "resources/app/src/templateAssets/"
     fs.copyFileSync(pausePath + "Pause.mp4", destPath + "/pauses/Pause.mp4")
     fs.copyFileSync(pausePath + "1 min Emergency Procedures.mp4", destPath + "/pauses/1 min Emergency Procedures.mp4")
     fs.copyFileSync(pausePath + "1 min loop with Countdown.mp4", destPath + "/pauses/1 min loop with Countdown.mp4")
