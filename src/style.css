@@ -182,7 +182,7 @@ export status {
     font-size: .8rem;
     opacity: .8;
     text-align: center;
-    height: 1rem;
+    width: 95vw;
 }
 
 export button {

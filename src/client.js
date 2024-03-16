@@ -112,18 +112,21 @@ const linter = (data) => {
     const date = data.date
     const rows = data.rows
 
+    let returnString = "Some potential issues were found:"
+
     if (date.length !== 10) {
         const dateDOM = document.getElementById("dateInput")
         dateDOM.style.border = ".1rem solid red"
-        dateDOM.addEventListener("change", () => {
+        const listener = dateDOM.addEventListener("change", () => {
             dateDOM.style.border = ""
+            dateDOM.removeEventListener("change", listener)
         })
-        return "Date must be in the format YYYY-MM-DD"
+        returnString += " Date must be in the format YYYY-MM-DD."
     }
 
     const pathList = []
     let pauses = 0
-    let times = 0
+    let missingTime = 0
 
     rows.forEach((row, index) => {
         const time = row.time
@@ -132,41 +135,72 @@ const linter = (data) => {
         const alert = row.alert
         const extend = row.extend
 
-        pathList.push(path)
+        // Check for times that overlap
+        const nextTime = rows[index + 1] ? rows[index + 1].time : Infinity
+        if (
+            parseInt(time[0]) + parseInt(time[1]) * 60 > parseInt(nextTime[0]) + parseInt(nextTime[1]) * 60
+        ) {
+            timeDisplays[index].style.border = ".1rem solid red"
+            timeDisplays[index + 1].style.border = ".1rem solid red"
+            const listener = timeDisplays[index].addEventListener("input", () => {
+                timeDisplays[index].style.border = ""
+                timeDisplays[index].removeEventListener("input", listener)
+            })
+            const listener2 = timeDisplays[index + 1].addEventListener("input", () => {
+                timeDisplays[index + 1].style.border = ""
+                timeDisplays[index + 1].removeEventListener("input", listener2)
+            })
+            returnString += ` Row ${index + 1} starts after row ${index + 2}.`
+        }
+
+        // Simply counts pauses
         if (pause) {
             pauses++
         }
-        if (path !== "" && time === "") {
-            times++
-        }
-    })
 
-    const hasPathGap = pathList.some((path, index) => {
+        // Check for gaps in the video files 
         if (
             (index === 0 && path === "")
             ||
-            (index !== 0 && path === "" && pathList[index - 1] !== "" && pathList[index + 1] !== "")
+            (index !== 0 && path === "" && rows[index - 1].path !== "" && rows[index + 1].path !== "")
         ) {
             fileInputs[index].style.border = ".1rem solid red"
-            fileInputs[index].addEventListener("input", () => {
+            const listener = fileInputs[index].addEventListener("input", () => {
                 fileInputs[index].style.border = ""
+                fileInputs[index].removeEventListener("input", listener)
             })
-            return true;
-        } else {
-            return false;
+            returnString += ` Row ${index + 1} is missing a file.`
         }
-    });
-    if (hasPathGap) {
-        return "Did you miss adding a video? There is a gap the list of videos."
-    }
+
+        // Checks for missing start times in cases where there probably should be one
+        if (
+            path !== ""
+            &&
+            startTimes[index].value === ""
+            &&
+            startTimes[index].disabled === false
+        ) {
+            startTimes[index].style.border = ".1rem solid red"
+            const listener = startTimes[index].addEventListener("input", () => {
+                startTimes[index].style.border = ""
+                startTimes[index].removeEventListener("input", listener)
+            })
+            missingTime++
+        }
+    })
+
     if (pauses === 0) {
-        return "Did you miss inserting pauses?"
+        returnString += " No pauses were added."
     }
-    if (times === 0) {
-        return "Did you miss inserting times?"
+    if (missingTime !== 0) {
+        returnString += " A start time is missing."
     }
 
-    return undefined
+    if (returnString === "Some potential issues were found:") {
+        return undefined
+    } else {
+        return returnString
+    }
 }
 
 const exportPlaylist = async (overwrite) => {
