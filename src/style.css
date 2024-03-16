@@ -30,6 +30,10 @@ date p {
     margin-right: .7rem;
 }
 
+date input {
+    border-radius: .5ch;
+}
+
 column-label {
     width: 60vw;
     display: flex;
@@ -38,7 +42,7 @@ column-label {
 }
 
 column-label label:nth-child(1) {
-    width: 20.5ch;
+    width: 23.8ch;
 }
 
 row {
@@ -52,22 +56,28 @@ row {
 }
 
 row input[type="number"] {
-    margin-right: .5vw;
     width: 18ch;
+    opacity: .8;
 }
 
 row input[type="file"] {
     width: 100%;
+
+    border: .1rem solid rgba(0, 0, 0, 0);
+    border-radius: .5ch;
 }
 
 row p {
     margin: 0;
     padding: 0;
-    font-size: .9rem;
-    opacity: 0.6;
+    font-size: 1rem;
+    opacity: 1;
     align-self: center;
+    text-align: center;
 
-    width: 8ch;
+    width: 10ch;
+
+    margin-right: 2ch;
 }
 
 modifiers {
@@ -87,7 +97,16 @@ modifiers {
     }
 
     to {
-        height: 2rem;
+        height: 3rem;
+    }
+}
+@keyframes collapse {
+    from {
+        height: 3rem;
+    }
+
+    to {
+        height: 1.5rem;
     }
 }
 
@@ -118,11 +137,30 @@ scroller {
     width: 60vw;
     overflow-y: scroll;
     overflow-x: scroll;
-    height: 62vh;
+    height: 63vh;
 }
 
 scroller::-webkit-scrollbar {
     display: none;
+}
+
+scroller {
+    background:
+        /* Shadow Cover TOP */
+        linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
+
+        /* Shadow Cover BOTTOM */
+        linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
+
+        /* Shadow TOP */
+        radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
+
+        /* Shadow BOTTOM */
+        radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
+
+    background-repeat: no-repeat;
+    background-size: 100% 2rem, 100% 2rem, 100% 1rem, 100% 1rem;
+    background-attachment: local, local, scroll, scroll;
 }
 
 @media (max-aspect-ratio: 10/9) {
@@ -144,6 +182,7 @@ export status {
     font-size: .8rem;
     opacity: .8;
     text-align: center;
+    height: 1rem;
 }
 
 export button {
@@ -152,6 +191,14 @@ export button {
     margin-top: 0;
     width: 8ch;
     font-size: 1.1rem;
+}
+
+#overwriteButton {
+    margin: 0;
+    margin-left: 2ch;
+    padding: 0;
+    font-size: .8rem;
+    width: 10ch;
 }
 
 footer {
@@ -163,23 +210,4 @@ footer {
     width: 100vw;
     font-size: .9rem;
     opacity: .9;
-}
-
-scroller {
-    background:
-        /* Shadow Cover TOP */
-        linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
-
-        /* Shadow Cover BOTTOM */
-        linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
-
-        /* Shadow TOP */
-        radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
-
-        /* Shadow BOTTOM */
-        radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
-
-    background-repeat: no-repeat;
-    background-size: 100% 2rem, 100% 2rem, 100% 1rem, 100% 1rem;
-    background-attachment: local, local, scroll, scroll;
 }

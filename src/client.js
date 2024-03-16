@@ -57,6 +57,7 @@ const updateTimePreviews = () => {
     })
 }
 
+// Gets added as onclick in the HTML
 const updateModifiers = (object) => {
     const pause = object.parentElement.children[2]
     const alert = object.parentElement.children[5]
@@ -68,7 +69,7 @@ const updateModifiers = (object) => {
         }
     }
     else if (object.id === "extendCheckbox") {
-        if (extend.checked === true && pause.checked === false) {
+        if (pause.checked === false && extend.checked === true) {
             pause.checked = true
         }
     }
@@ -79,6 +80,14 @@ const updateModifiers = (object) => {
         if (pause.checked === false && extend.checked === true) {
             extend.checked = false
         }
+    }
+
+    if (pause.checked) {
+        object.parentElement.style.animation = "expand .1s ease-in-out"
+        object.parentElement.style.height = "3rem"
+    } else {
+        object.parentElement.style.animation = "collapse .1s ease-in-out"
+        object.parentElement.style.height = "1.5rem"
     }
 }
 
@@ -99,7 +108,68 @@ modifiers.forEach(modifier => {
     })
 })
 
-const exportPlaylist = async () => {
+const linter = (data) => {
+    const date = data.date
+    const rows = data.rows
+
+    if (date.length !== 10) {
+        const dateDOM = document.getElementById("dateInput")
+        dateDOM.style.border = ".1rem solid red"
+        dateDOM.addEventListener("change", () => {
+            dateDOM.style.border = ""
+        })
+        return "Date must be in the format YYYY-MM-DD"
+    }
+
+    const pathList = []
+    let pauses = 0
+    let times = 0
+
+    rows.forEach((row, index) => {
+        const time = row.time
+        const path = row.path
+        const pause = row.pause
+        const alert = row.alert
+        const extend = row.extend
+
+        pathList.push(path)
+        if (pause) {
+            pauses++
+        }
+        if (path !== "" && time === "") {
+            times++
+        }
+    })
+
+    const hasPathGap = pathList.some((path, index) => {
+        if (
+            (index === 0 && path === "")
+            ||
+            (index !== 0 && path === "" && pathList[index - 1] !== "" && pathList[index + 1] !== "")
+        ) {
+            fileInputs[index].style.border = ".1rem solid red"
+            fileInputs[index].addEventListener("input", () => {
+                fileInputs[index].style.border = ""
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+    if (hasPathGap) {
+        return "Did you miss adding a video? There is a gap the list of videos."
+    }
+    if (pauses === 0) {
+        return "Did you miss inserting pauses?"
+    }
+    if (times === 0) {
+        return "Did you miss inserting times?"
+    }
+
+    return undefined
+}
+
+const exportPlaylist = async (overwrite) => {
 
     const rows = []
 
@@ -112,7 +182,8 @@ const exportPlaylist = async () => {
             time: time,
             path: path,
             pause: localModifiers === undefined ? undefined : localModifiers[2].checked,
-            alert: localModifiers === undefined ? undefined : localModifiers[5].checked
+            alert: localModifiers === undefined ? undefined : localModifiers[5].checked,
+            extend: localModifiers === undefined ? undefined : localModifiers[8].checked,
         }
 
         rows.push(data)
@@ -124,8 +195,27 @@ const exportPlaylist = async () => {
     }
 
     const status = document.querySelector("export status")
+
+    if (!overwrite) {
+        status.innerText = "Checking for mistakes"
+
+        const lintResult = linter(data)
+
+        if (lintResult !== undefined) {
+            status.innerText = lintResult
+            const overwrite = document.createElement("button")
+            overwrite.innerText = "Overwrite"
+            overwrite.id = "overwriteButton"
+            overwrite.onclick = () => {
+                exportPlaylist(true)
+            }
+            status.appendChild(overwrite)
+            return
+        }
+    }
+
     status.innerText = "(This might take a while) Exporting"
-    status.title = "This might take a while because if you're writing to a slow drive. The program will freeze while exporting. Don't worry, it's not stuck. Just wait."
+    status.title = "This might take a while if you're writing to a slow drive. The program will freeze while exporting. Don't worry, it's not stuck. Just wait."
 
     const dots = setInterval(() => {
         status.innerText += "."
@@ -134,13 +224,9 @@ const exportPlaylist = async () => {
     const response = await window.electronAPI.saveFile(JSON.stringify(data))
 
     clearInterval(dots)
-    if (response === "Success") {
-        status.innerText = "Finnished Successfully"
-    } else if (response === "Cancelled") {
-        status.innerText = "Cancelled"
-    } else {
-        status.innerText = response
-    }
+
+    status.innerText = response
+    status.title = ""
 }
 
 // Dummy protection

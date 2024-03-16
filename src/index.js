@@ -23,6 +23,24 @@ const createWindow = () => {
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
+
+    mainWindow.on("close", (event) => {
+        event.preventDefault();
+    
+        const choice = dialog.showMessageBoxSync({
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            title: 'Confirm',
+            message: 'Are you sure you want to quit?',
+            defaultId: 1,
+            cancelId: 1,
+            noLink: true
+        });
+        const shouldQuit = (choice === 0); // "Yes" is the first button, so it returns 0
+        if (shouldQuit) {
+            mainWindow.destroy()
+        }
+    })
 };
 
 // This method will be called when Electron has finished
@@ -38,7 +56,7 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit();
+        app.quit()
     }
 });
 
@@ -49,6 +67,7 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
@@ -73,6 +92,7 @@ const createPS1 = (rows) => {
         const time = row.time // can be "disabled" or [hour, minute]
         const path = row.path
         const pause = row.pause
+        const extend = row.extend
         let alert
         try {
             alert = rows[index - 1].alert
@@ -96,13 +116,22 @@ const createPS1 = (rows) => {
                 body += delayCommand
             }
         }
-
         const name = path.split("\\").pop()
-        body += "Write-Host 'Now playing " + name + "'\n"
-        body += launchCommand + " '\\videos\\" + name + "'" + args + enqueueArg + "\n\n"
+        const sanitizedName = name
+            .replace(/'/g, "''")
+            .replace(/"/g, '""')
+            .replace(/`/g, '``')
+            .replace(/\$/g, '`$')
+            .replace(/#/g, '`#');
+        body += "Write-Host 'Now playing " + sanitizedName + "'\n";
+        body += launchCommand + " '\\videos\\" + sanitizedName + "'" + args + enqueueArg + "\n\n"
         body += delayCommand
 
         if (pause) {
+            body += pauseCommand + enqueueArg + "\n\n"
+            body += delayCommand
+        }
+        if (extend) {
             body += pauseCommand + enqueueArg + "\n\n"
             body += delayCommand
         }
@@ -123,12 +152,16 @@ const main = async (event, dataRaw) => {
     const data = JSON.parse(dataRaw)
     data.rows = data.rows.filter(row => row.path !== "")
     console.log(data);
+
     if (data.rows.length === 0) {
         return "Error - No videos added"
     }
+    if (data.date === "") {
+        return "Error - No date specified"
+    }
 
     // Destination folder path
-    const destPath = saveFolderPath.filePaths[0] + "/Trekdag_Playlist" + (data.date ? "_" + data.date : "")
+    const destPath = saveFolderPath.filePaths[0] + "/" + data.date.replace(/[^0-9-]/g, "")
 
     if (fs.existsSync(destPath)) {
         const response = await dialog.showMessageBox({
@@ -182,8 +215,6 @@ const main = async (event, dataRaw) => {
     })
     notification.show()
 
-    return "Success"
+    return "Finnished Successfully"
 }
 
-
-// Add: Ask again if you wanna close the app if there's a playlist in progress 

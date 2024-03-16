@@ -1,0 +1,13 @@
+[X] confirm if you wanna close the app
+[X] fix single quotes in file names and PS UI by escaping it with ' so "future's end" -> "future''s end"
+    [X] i also added some other string replacements for other cases which could mess the script up
+[X] remove "trekdag_playlist" prefix
+[X] make date field obligatory (bc of naming change)
+[X] frontend checking config if there's something odd
+[ ] autosave and load from localstorage or from file (invisibly). Maybe allow manual save and manual load from file.
+    [ ] can be a little popup in the corner notifying you that last config is able to be loaded
+[ ] have a preview button and window (that might open after clicking export) 
+    [ ] make preview nicely formatted and clearly showing the blocks
+[ ] show blocks in editor
+[ ] if possible, maybe be able to cancel export (maybe a dialog thats there while exporting and it will check if thats been closed or something and then canceling)
+[ ] screenshot button so you can share and so poeple can verify (you can just screenshot yourself for the time being)
