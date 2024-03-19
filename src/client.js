@@ -5,7 +5,7 @@ const modifiers = document.querySelectorAll('modifiers');
 const fileInputs = document.querySelectorAll('input[type="file"]');
 const formattedTimes = [];
 
-const updateStartTimes = () => {
+const updateTimeInputs = () => {
     startTimes.forEach((startTime, index) => {
         try {
             if (
@@ -27,7 +27,7 @@ const updateStartTimes = () => {
     })
 }
 
-const updateTimePreviews = () => {
+const updateFormattedTimes = () => {
     startTimes.forEach((startTime, index) => {
         const time = startTime.value
         const timeDisplay = timeDisplays[index]
@@ -57,8 +57,7 @@ const updateTimePreviews = () => {
     })
 }
 
-// Gets added as onclick in the HTML
-const updateModifiers = (object) => {
+const updateModifierStates = (object) => {
     const pause = object.parentElement.children[2]
     const alert = object.parentElement.children[5]
     const extend = object.parentElement.children[8]
@@ -92,17 +91,31 @@ const updateModifiers = (object) => {
 }
 
 const update = () => {
-    updateStartTimes()
-    updateTimePreviews()
+    updateTimeInputs()
+    updateFormattedTimes()
 }
 
+// Event listeners for updating all the states
 startTimes.forEach(startTime => {
     startTime.addEventListener("input", () => {
         update()
     })
 })
-
+fileInputs.forEach(fileInput => {
+    fileInput.addEventListener("input", () => {
+        update()
+    })
+})
 modifiers.forEach(modifier => {
+    modifier.children[2].addEventListener("click", () => {
+        updateModifierStates(modifier.children[2])
+    })
+    modifier.children[5].addEventListener("click", () => {
+        updateModifierStates(modifier.children[5])
+    })
+    modifier.children[8].addEventListener("click", () => {
+        updateModifierStates(modifier.children[8])
+    })
     modifier.addEventListener("change", () => {
         update()
     })
@@ -124,7 +137,6 @@ const linter = (data) => {
         returnString += " Date must be in the format YYYY-MM-DD."
     }
 
-    const pathList = []
     let pauses = 0
     let missingTime = 0
 
@@ -203,8 +215,7 @@ const linter = (data) => {
     }
 }
 
-const exportPlaylist = async (overwrite) => {
-
+const exportButton = async (overwrite) => {
     const rows = []
 
     document.querySelectorAll("row").forEach((row, index) => {
@@ -241,7 +252,7 @@ const exportPlaylist = async (overwrite) => {
             overwrite.innerText = "Overwrite"
             overwrite.id = "overwriteButton"
             overwrite.onclick = () => {
-                exportPlaylist(true)
+                exportButton(true)
             }
             status.appendChild(overwrite)
             return
@@ -263,6 +274,7 @@ const exportPlaylist = async (overwrite) => {
     status.title = ""
 }
 
+
 // Dummy protection
 window.addEventListener("keydown", (event) => {
     if (
@@ -273,3 +285,48 @@ window.addEventListener("keydown", (event) => {
         event.preventDefault()
     }
 })
+
+
+// Auto saving
+const saveConfig = () => {
+    const save = {
+        date: document.getElementById("dateInput").value,
+        startTimes: [...startTimes].map(startTime => startTime.value),
+        modifiers: [...modifiers].map(modifier => [
+            modifier.children[2].checked,
+            modifier.children[5].checked,
+            modifier.children[8].checked
+        ]),
+        fileInputs: [...fileInputs].map(fileInput => fileInput.files[0] ? fileInput.files[0].path : "")
+    }
+    localStorage.setItem("save", JSON.stringify(save))
+}
+const loadConfig = () => {
+    if (localStorage.getItem("save")) {
+        const save = JSON.parse(localStorage.getItem("save"))
+
+        document.getElementById("dateInput").value = save.date
+
+        save.startTimes.forEach((startTime, index) => {
+            startTimes[index].value = startTime
+        })
+
+        save.modifiers.forEach((modifier, index) => {
+            modifiers[index].children[2].checked = modifier[0]
+            modifiers[index].children[5].checked = modifier[1]
+            modifiers[index].children[8].checked = modifier[2]
+        })
+
+        save.fileInputs.forEach((fileInput, index) => {
+            if (fileInput) {
+                fileInputs[index].files[0] = fileInput
+            }
+        })
+
+        update()
+    }
+}
+const saveEvent = setInterval(saveConfig, 500)
+window.onload = () => {
+    loadConfig()
+}
