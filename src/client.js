@@ -330,3 +330,7 @@ const saveEvent = setInterval(saveConfig, 500)
 window.onload = () => {
     loadConfig()
 }
+window.onbeforeunload = () => {
+    clearInterval(saveEvent)
+    saveConfig()
+}

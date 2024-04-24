@@ -65,6 +65,8 @@ row input[type="file"] {
 
     border: .1rem solid rgba(0, 0, 0, 0);
     border-radius: .5ch;
+
+    font-weight: bold;
 }
 
 row p {
